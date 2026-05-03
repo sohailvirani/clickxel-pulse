@@ -29070,6 +29070,30 @@ body.servi-ce-details .rts-footer-two-area {
 .rts-light-mood .inner-page.service-1 .cta-main-wrapper-three.rts-section-gapBottom {
   background: #fff;
 }
+.rts-light-mood .inner-page.service-1 .rts-breadcrumb-area.bg_image {
+  background: #fff !important;
+  background-image: none !important;
+}
+.rts-light-mood .inner-page.service-1 .rts-service-area {
+  background: #fff;
+}
+.rts-light-mood .inner-page.service-1 .rts-breadcrumb-area .works,
+.rts-light-mood .inner-page.service-1 .rts-breadcrumb-area .title,
+.rts-light-mood .inner-page.service-1 .rts-breadcrumb-area .bg-text,
+.rts-light-mood .inner-page.service-1 .title-area .sub-title,
+.rts-light-mood .inner-page.service-1 .title-top-service-varticle .title,
+.rts-light-mood .inner-page.service-1 .title-top-service-varticle .dsic,
+.rts-light-mood .inner-page.service-1 .service-area-one-main-wrapper .single-item-service-one .list-title h3,
+.rts-light-mood .inner-page.service-1 .service-area-one-main-wrapper .single-item-service-one .list-info .disc {
+  color: #141414;
+}
+.rts-light-mood .inner-page.service-1 .title-top-service-varticle .learn-more-btn,
+.rts-light-mood .inner-page.service-1 .service-area-one-main-wrapper .single-item-service-one a {
+  color: #141414;
+}
+.rts-light-mood .inner-page.service-1 .service-area-one-main-wrapper .single-item-service-one .button-area svg path {
+  fill: #141414;
+}
 .rts-light-mood .inner-page.service-1 .title-area-left-three-large .title,
 .rts-light-mood .inner-page.service-1 .single-service-area-start .title-area .title,
 .rts-light-mood .inner-page.service-1 .brand-style-one .title-brand,
