@@ -14767,6 +14767,15 @@ nav.nav-area ul li a {
   line-height: 18px;
 }
 
+.header-area.header-one .menu-btn {
+  display: none;
+}
+@media only screen and (max-width: 1199px) {
+  .header-area.header-one .menu-btn {
+    display: block;
+  }
+}
+
 .rts-header-area-two {
   position: absolute;
   width: 100%;
