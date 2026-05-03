@@ -90,6 +90,7 @@
       rtsJs.titleOpacityWrap();
       rtsJs.magicCoursor();
       rtsJs.portfolioTenSwiper();
+      rtsJs.headerFooterIncludes();
       rtsJs.simplifyHomeMenu();
       rtsJs.offcanvasMenu();
       rtsJs.preloaderWithBannerActivation();
@@ -100,6 +101,56 @@
       rtsJs.countDown();
       rtsJs.rollingText();
       rtsJs.darkLight();
+    },
+
+    headerFooterIncludes: function () {
+      $(document).ready(function () {
+        if (window.__rtsHeaderFooterIncludesApplied) {
+          return;
+        }
+        window.__rtsHeaderFooterIncludesApplied = true;
+
+        var headerUrl = window.location.origin + '/includes/header.html';
+        var footerUrl = window.location.origin + '/includes/footer.html';
+
+        try {
+          var headerHtml = $.ajax({
+            url: headerUrl,
+            async: false,
+            dataType: 'html',
+            cache: true
+          }).responseText;
+
+          if (headerHtml) {
+            var $headerTarget = $('header.header-area').first();
+            if (!$headerTarget.length) {
+              $headerTarget = $('.rts-header-area-two').first();
+            }
+            if (!$headerTarget.length) {
+              $headerTarget = $('.header-area').first();
+            }
+            if ($headerTarget.length) {
+              $headerTarget.replaceWith(headerHtml);
+            }
+          }
+        } catch (e) { }
+
+        try {
+          var footerHtml = $.ajax({
+            url: footerUrl,
+            async: false,
+            dataType: 'html',
+            cache: true
+          }).responseText;
+
+          if (footerHtml) {
+            var $footerTarget = $('.rts-footer-area-one, .rts-footer-two-area, .rts-footer-area').first();
+            if ($footerTarget.length) {
+              $footerTarget.replaceWith(footerHtml);
+            }
+          }
+        } catch (e) { }
+      });
     },
 
     simplifyHomeMenu: function (e) {
