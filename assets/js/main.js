@@ -91,6 +91,7 @@
       rtsJs.magicCoursor();
       rtsJs.portfolioTenSwiper();
       rtsJs.headerFooterIncludes();
+      rtsJs.prettyUrls();
       rtsJs.simplifyHomeMenu();
       rtsJs.offcanvasMenu();
       rtsJs.preloaderWithBannerActivation();
@@ -153,6 +154,76 @@
       });
     },
 
+    prettyUrls: function () {
+      $(document).ready(function () {
+        if (window.__rtsPrettyUrlsApplied) {
+          return;
+        }
+        window.__rtsPrettyUrlsApplied = true;
+
+        var hostname = (window.location.hostname || '').toLowerCase();
+        var isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+        if (isLocal) {
+          return;
+        }
+
+        var pathname = window.location.pathname || '';
+        var normalizedPath = pathname;
+
+        if (normalizedPath.toLowerCase().endsWith('/index.html')) {
+          normalizedPath = normalizedPath.slice(0, -'/index.html'.length) || '/';
+        } else if (normalizedPath.toLowerCase().endsWith('.html')) {
+          normalizedPath = normalizedPath.slice(0, -'.html'.length);
+        }
+
+        if (normalizedPath !== pathname) {
+          var newUrl = normalizedPath + (window.location.search || '') + (window.location.hash || '');
+          window.history.replaceState({}, '', newUrl);
+        }
+
+        $('a[href]').each(function () {
+          var href = $(this).attr('href');
+          if (!href) {
+            return;
+          }
+
+          var hrefLower = href.toLowerCase();
+          if (
+            hrefLower.startsWith('http:') ||
+            hrefLower.startsWith('https:') ||
+            hrefLower.startsWith('mailto:') ||
+            hrefLower.startsWith('tel:') ||
+            hrefLower.startsWith('javascript:') ||
+            hrefLower.startsWith('#')
+          ) {
+            return;
+          }
+
+          var url;
+          try {
+            url = new URL(href, window.location.origin);
+          } catch (e) {
+            return;
+          }
+
+          if (url.origin !== window.location.origin) {
+            return;
+          }
+
+          var urlPathLower = (url.pathname || '').toLowerCase();
+          if (urlPathLower.endsWith('/index.html')) {
+            url.pathname = url.pathname.slice(0, -'/index.html'.length) || '/';
+          } else if (urlPathLower.endsWith('.html')) {
+            url.pathname = url.pathname.slice(0, -'.html'.length);
+          } else {
+            return;
+          }
+
+          $(this).attr('href', url.pathname + url.search + url.hash);
+        });
+      });
+    },
+
     simplifyHomeMenu: function (e) {
       $(document).ready(function () {
         var pagesToRemove = ['index-two.html', 'index-three.html', 'index-four.html', 'index-five.html', 'index-six.html'];
@@ -164,7 +235,9 @@
         $homeMenuItems.each(function () {
           var $li = $(this);
           var $a = $li.children('a').first();
-          var homeUrl = window.location.origin + '/index.html';
+          var hostname = (window.location.hostname || '').toLowerCase();
+          var isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+          var homeUrl = isLocal ? 'index.html' : window.location.origin + '/';
           $a.attr('href', homeUrl);
           $li.removeClass('menu-item-has-children');
           $li.find('ul').remove();
