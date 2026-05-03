@@ -113,12 +113,16 @@
         $homeMenuItems.each(function () {
           var $li = $(this);
           var $a = $li.children('a').first();
-          $a.attr('href', 'index.html');
+          var homeUrl = window.location.origin + '/index.html';
+          $a.attr('href', homeUrl);
+          $li.removeClass('menu-item-has-children');
+          $li.find('ul').remove();
 
           $a.off('click.rtsHome').on('click.rtsHome', function (event) {
-            var currentPath = window.location.pathname || '';
-            var isHome = currentPath === '/' || /(^|\/)index\.html$/i.test(currentPath);
-            if (isHome) {
+            var currentUrl = window.location.href || '';
+            var normalizedCurrent = currentUrl.split('#')[0].split('?')[0];
+            var normalizedHome = homeUrl.split('#')[0].split('?')[0];
+            if (normalizedCurrent.toLowerCase() === normalizedHome.toLowerCase()) {
               event.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }
