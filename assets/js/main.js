@@ -114,8 +114,15 @@
           var $li = $(this);
           var $a = $li.children('a').first();
           $a.attr('href', 'index.html');
-          $li.removeClass('menu-item-has-children');
-          $li.find('ul').remove();
+
+          $a.off('click.rtsHome').on('click.rtsHome', function (event) {
+            var currentPath = window.location.pathname || '';
+            var isHome = currentPath === '/' || /(^|\/)index\.html$/i.test(currentPath);
+            if (isHome) {
+              event.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          });
         });
       });
     },
