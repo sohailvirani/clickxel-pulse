@@ -4,6 +4,20 @@
       "handle": "filesystem"
     },
     {
+      "src": "/service-1/?$",
+      "status": 308,
+      "headers": {
+        "Location": "/services"
+      }
+    },
+    {
+      "src": "/service-1\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/services"
+      }
+    },
+    {
       "src": "/(.+)/",
       "dest": "/$1.html"
     },

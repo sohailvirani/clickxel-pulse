@@ -163,9 +163,6 @@
 
         var hostname = (window.location.hostname || '').toLowerCase();
         var isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
-        if (isLocal) {
-          return;
-        }
 
         var pathname = window.location.pathname || '';
         var normalizedPath = pathname;
@@ -179,6 +176,10 @@
         if (normalizedPath !== pathname) {
           var newUrl = normalizedPath + (window.location.search || '') + (window.location.hash || '');
           window.history.replaceState({}, '', newUrl);
+        }
+
+        if (isLocal) {
+          return;
         }
 
         $('a[href]').each(function () {
