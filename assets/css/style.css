@@ -29436,6 +29436,12 @@ body.servi-ce-details .rts-footer-two-area {
 .rts-footer-area-one .footer-left-area .logo-footer .logo-2 {
   display: none;
 }
+.rts-footer-area-one.bg-white .footer-left-area .logo-footer .logo-1 {
+  display: none;
+}
+.rts-footer-area-one.bg-white .footer-left-area .logo-footer .logo-2 {
+  display: block;
+}
 
 .header-three .logo-area {
   display: block;
