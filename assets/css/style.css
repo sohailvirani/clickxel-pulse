@@ -16732,6 +16732,24 @@ h2 div {
   transform: translate(-50%, -50%);
   min-width: max-content;
 }
+.rts-breadcrumb-area .inner .story-intro {
+  max-width: 860px;
+  margin: 18px auto 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 18px;
+  line-height: 1.75;
+  letter-spacing: 0.2px;
+}
+.rts-breadcrumb-area .inner .story-intro strong {
+  color: #fff;
+  font-weight: 600;
+}
+@media (max-width: 768px) {
+  .rts-breadcrumb-area .inner .story-intro {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+}
 @media (max-width: 1400px) {
   .rts-breadcrumb-area .inner .bg-text {
     font-size: 180px;
