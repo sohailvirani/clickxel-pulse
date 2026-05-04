@@ -16753,6 +16753,36 @@ h2 div {
 .modal-sidebar-scroll.rts-dark-light {
   display: none !important;
 }
+.mission-vision-area .mv-card {
+  height: 100%;
+  padding: 38px 34px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
+}
+.mission-vision-area .mv-kicker {
+  display: inline-block;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 14px;
+}
+.mission-vision-area .mv-text {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.92);
+}
+@media (max-width: 991px) {
+  .mission-vision-area .mv-card {
+    padding: 30px 24px;
+  }
+  .mission-vision-area .mv-text {
+    font-size: 18px;
+  }
+}
 @media (max-width: 1400px) {
   .rts-breadcrumb-area .inner .bg-text {
     font-size: 180px;
