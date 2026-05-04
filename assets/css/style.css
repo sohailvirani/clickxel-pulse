@@ -16750,6 +16750,9 @@ h2 div {
     line-height: 1.7;
   }
 }
+.modal-sidebar-scroll.rts-dark-light {
+  display: none !important;
+}
 @media (max-width: 1400px) {
   .rts-breadcrumb-area .inner .bg-text {
     font-size: 180px;

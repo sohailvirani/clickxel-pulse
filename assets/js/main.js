@@ -101,7 +101,6 @@
       rtsJs.stickyHeader();
       rtsJs.countDown();
       rtsJs.rollingText();
-      rtsJs.darkLight();
     },
 
     headerFooterIncludes: function () {
@@ -2375,7 +2374,7 @@
         }
 
         // Open
-        $('.rts-offcanvas-wrapper .action-menu .open-event').on('click', function (event) {
+        $(document).off('click.rtsOffcanvasOpen', '.rts-offcanvas-wrapper .action-menu .open-event').on('click.rtsOffcanvasOpen', '.rts-offcanvas-wrapper .action-menu .open-event', function (event) {
           event.preventDefault();
           var item = $(this),
             block = 'block';
@@ -2406,7 +2405,7 @@
         });
 
         // Close
-        $('.rts-offcanvas-wrapper .action-menu .close-event').on('click', function () {
+        $(document).off('click.rtsOffcanvasClose', '.rts-offcanvas-wrapper .action-menu .close-event').on('click.rtsOffcanvasClose', '.rts-offcanvas-wrapper .action-menu .close-event', function () {
           $('.navbar-nav-button.active > li').removeClass('loading');
           var item = $('.open-event'),
             block = 'none';
