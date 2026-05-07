@@ -18,6 +18,10 @@
       }
     },
     {
+      "src": "/blog/([^/]+)/?$",
+      "dest": "/blog-details.html?slug=$1"
+    },
+    {
       "src": "/(.+)/",
       "dest": "/$1.html"
     },

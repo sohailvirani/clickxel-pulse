@@ -16783,6 +16783,48 @@ h2 div {
     font-size: 18px;
   }
 }
+.sanity-loading,
+.sanity-empty,
+.sanity-error {
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.82);
+}
+.sanity-error {
+  border-color: rgba(255, 80, 80, 0.35);
+  color: rgba(255, 220, 220, 0.92);
+}
+.blog-details-main-wrapper [data-sanity-blog-body] h1,
+.blog-details-main-wrapper [data-sanity-blog-body] h2,
+.blog-details-main-wrapper [data-sanity-blog-body] h3,
+.blog-details-main-wrapper [data-sanity-blog-body] h4,
+.blog-details-main-wrapper [data-sanity-blog-body] h5,
+.blog-details-main-wrapper [data-sanity-blog-body] h6 {
+  margin: 28px 0 12px;
+}
+.blog-details-main-wrapper [data-sanity-blog-body] p {
+  margin: 0 0 18px;
+}
+.blog-details-main-wrapper [data-sanity-blog-body] ul,
+.blog-details-main-wrapper [data-sanity-blog-body] ol {
+  margin: 0 0 18px 18px;
+}
+.blog-details-main-wrapper [data-sanity-blog-body] blockquote {
+  margin: 24px 0;
+  padding: 18px 20px;
+  border-left: 3px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+}
+.blog-details-main-wrapper [data-sanity-blog-body] img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 14px;
+  margin: 12px 0 18px;
+  display: block;
+}
 @media (max-width: 1400px) {
   .rts-breadcrumb-area .inner .bg-text {
     font-size: 180px;

@@ -93,6 +93,7 @@
       rtsJs.headerFooterIncludes();
       rtsJs.prettyUrls();
       rtsJs.simplifyHomeMenu();
+      rtsJs.sanityBlog();
       rtsJs.offcanvasMenu();
       rtsJs.preloaderWithBannerActivation();
       rtsJs.isotopeMasonry();
@@ -253,6 +254,372 @@
           });
         });
       });
+    },
+
+    sanityBlog: function () {
+      $(document).ready(function () {
+        if (window.__rtsSanityBlogApplied) {
+          return;
+        }
+        window.__rtsSanityBlogApplied = true;
+
+        var $listTarget = $('[data-sanity-blog-list]').first();
+        var $detailsTarget = $('[data-sanity-blog-details]').first();
+
+        if (!$listTarget.length && !$detailsTarget.length) {
+          return;
+        }
+
+        var config = rtsJs.getSanityConfig();
+        if (!config.projectId || !config.dataset) {
+          if ($listTarget.length) {
+            rtsJs.renderSanityMessage($listTarget, 'Missing Sanity config. Set meta tags: sanity-project-id and sanity-dataset.', 'error');
+          }
+          if ($detailsTarget.length) {
+            rtsJs.renderSanityMessage($('[data-sanity-blog-body]').first(), 'Missing Sanity config. Set meta tags: sanity-project-id and sanity-dataset.', 'error');
+          }
+          return;
+        }
+
+        if ($listTarget.length) {
+          rtsJs.loadSanityBlogList(config, $listTarget);
+        }
+        if ($detailsTarget.length) {
+          rtsJs.loadSanityBlogDetails(config);
+        }
+      });
+    },
+
+    getSanityConfig: function () {
+      var projectId = ($('meta[name="sanity-project-id"]').attr('content') || '').trim();
+      var dataset = ($('meta[name="sanity-dataset"]').attr('content') || '').trim();
+      var apiVersion = ($('meta[name="sanity-api-version"]').attr('content') || '').trim() || '2025-05-01';
+      var useCdnMeta = ($('meta[name="sanity-use-cdn"]').attr('content') || '').trim().toLowerCase();
+      var useCdn = useCdnMeta !== 'false';
+      var token = ((window && window.SANITY_TOKEN) ? String(window.SANITY_TOKEN) : '').trim();
+
+      return {
+        projectId: projectId,
+        dataset: dataset,
+        apiVersion: apiVersion,
+        useCdn: useCdn,
+        token: token
+      };
+    },
+
+    renderSanityMessage: function ($target, message, type) {
+      if (!$target || !$target.length) {
+        return;
+      }
+      var safeMessage = rtsJs.escapeHtml(message || '');
+      var cls = type === 'error' ? 'sanity-error' : 'sanity-empty';
+      $target.html('<div class="' + cls + '">' + safeMessage + '</div>');
+    },
+
+    escapeHtml: function (value) {
+      var str = value == null ? '' : String(value);
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    },
+
+    formatDate: function (isoDate) {
+      if (!isoDate) {
+        return '';
+      }
+      var date = new Date(isoDate);
+      if (isNaN(date.getTime())) {
+        return '';
+      }
+      try {
+        return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+      } catch (e) {
+        return date.toDateString();
+      }
+    },
+
+    buildSanityQueryUrl: function (config, query, params) {
+      var subdomain = config.useCdn ? 'apicdn' : 'api';
+      var baseUrl = 'https://' + config.projectId + '.' + subdomain + '.sanity.io/v' + config.apiVersion + '/data/query/' + config.dataset;
+      var url = baseUrl + '?query=' + encodeURIComponent(query);
+      if (params && typeof params === 'object') {
+        Object.keys(params).forEach(function (key) {
+          url += '&$' + encodeURIComponent(key) + '=' + encodeURIComponent(JSON.stringify(params[key]));
+        });
+      }
+      return url;
+    },
+
+    sanityQuery: function (config, query, params) {
+      var url = rtsJs.buildSanityQueryUrl(config, query, params);
+      var headers = { 'Accept': 'application/json' };
+      if (config.token) {
+        headers.Authorization = 'Bearer ' + config.token;
+      }
+      return fetch(url, { method: 'GET', headers: headers })
+        .then(function (res) {
+          if (!res.ok) {
+            return res.text().then(function (text) {
+              throw new Error(text || ('Sanity request failed (' + res.status + ')'));
+            });
+          }
+          return res.json();
+        })
+        .then(function (json) {
+          if (!json || typeof json !== 'object' || !('result' in json)) {
+            throw new Error('Invalid Sanity response');
+          }
+          return json.result;
+        });
+    },
+
+    loadSanityBlogList: function (config, $target) {
+      $target.html('<div class="sanity-loading">Loading posts...</div>');
+
+      var query = '*[_type == "post" && defined(slug.current)] | order(coalesce(publishedAt, _createdAt) desc) [0...12]{title, "slug": slug.current, "excerpt": coalesce(excerpt, ""), publishedAt, "categories": categories[]->title, "mainImageUrl": mainImage.asset->url}';
+
+      rtsJs.sanityQuery(config, query)
+        .then(function (posts) {
+          if (!Array.isArray(posts) || posts.length === 0) {
+            rtsJs.renderSanityMessage($target, 'No posts yet.', 'empty');
+            return;
+          }
+
+          var html = '';
+          posts.forEach(function (post) {
+            if (!post || !post.slug) {
+              return;
+            }
+            var title = rtsJs.escapeHtml(post.title || 'Untitled');
+            var excerpt = rtsJs.escapeHtml(post.excerpt || '');
+            var categories = Array.isArray(post.categories) ? post.categories.filter(Boolean) : [];
+            var categoryText = categories.length ? categories.join(' / ') : 'Blog';
+            var imageUrl = post.mainImageUrl ? rtsJs.escapeHtml(post.mainImageUrl) : '';
+            var href = 'blog/' + encodeURIComponent(post.slug);
+
+            html += '' +
+              '<div class="single-blog-list-one rts-skew-up-gsap">' +
+              '  <a href="' + href + '" class="thumbnail">' +
+              (imageUrl ? ('    <img src="' + imageUrl + '" alt="' + title + '">') : '') +
+              '  </a>' +
+              '  <div class="blog-content-area">' +
+              '    <span>' + rtsJs.escapeHtml(categoryText) + '</span>' +
+              '    <a href="' + href + '">' +
+              '      <h3 class="title quote">' + title + '</h3>' +
+              '    </a>' +
+              (excerpt ? ('    <p class="disc">' + excerpt + '</p>') : '') +
+              '    <a href="' + href + '" class="read-more-bb">Read More</a>' +
+              '  </div>' +
+              '</div>';
+          });
+
+          if (!html) {
+            rtsJs.renderSanityMessage($target, 'No posts yet.', 'empty');
+            return;
+          }
+          $target.html(html);
+        })
+        .catch(function (err) {
+          rtsJs.renderSanityMessage($target, (err && err.message) ? err.message : 'Failed to load posts.', 'error');
+        });
+    },
+
+    getSanitySlugFromLocation: function () {
+      try {
+        var searchParams = new URLSearchParams(window.location.search || '');
+        var slug = (searchParams.get('slug') || '').trim();
+        if (slug) {
+          return slug;
+        }
+      } catch (e) { }
+
+      var pathname = window.location.pathname || '';
+      var match = pathname.match(/\/blog\/([^\/?#]+)/i);
+      if (match && match[1]) {
+        try {
+          return decodeURIComponent(match[1]);
+        } catch (e) {
+          return match[1];
+        }
+      }
+
+      return '';
+    },
+
+    loadSanityBlogDetails: function (config) {
+      var slug = rtsJs.getSanitySlugFromLocation();
+      var $body = $('[data-sanity-blog-body]').first();
+
+      if (!slug) {
+        rtsJs.renderSanityMessage($body, 'Missing post slug.', 'error');
+        return;
+      }
+
+      $body.html('<div class="sanity-loading">Loading post...</div>');
+
+      var query = '*[_type == "post" && slug.current == $slug][0]{title, "slug": slug.current, publishedAt, "categories": categories[]->title, "authorName": author->name, "authorImageUrl": author->image.asset->url, "mainImageUrl": mainImage.asset->url, body[]{..., _type == "image" => {"url": asset->url, "alt": coalesce(alt, "")}}}';
+
+      rtsJs.sanityQuery(config, query, { slug: slug })
+        .then(function (post) {
+          if (!post) {
+            rtsJs.renderSanityMessage($body, 'Post not found.', 'error');
+            return;
+          }
+
+          var title = post.title || 'Untitled';
+          var categories = Array.isArray(post.categories) ? post.categories.filter(Boolean) : [];
+          var metaText = categories.length ? categories.join(' / ') : 'Blog';
+          var dateText = rtsJs.formatDate(post.publishedAt) || '';
+
+          $('[data-sanity-post-title]').first().text(title);
+
+          var $meta = $('[data-sanity-post-meta]').first();
+          if ($meta.length) {
+            var safeMeta = rtsJs.escapeHtml(metaText || 'Blog') + (dateText ? (' <span>/ ' + rtsJs.escapeHtml(dateText) + '</span>') : '');
+            $meta.html(safeMeta);
+          }
+
+          var authorName = post.authorName || '';
+          $('[data-sanity-author-name]').first().text(authorName || '');
+
+          var $authorImg = $('[data-sanity-author-image]').first();
+          if ($authorImg.length && post.authorImageUrl) {
+            $authorImg.attr('src', post.authorImageUrl);
+            $authorImg.attr('alt', authorName ? (authorName + ' photo') : 'Author');
+          }
+
+          var $mainImage = $('[data-sanity-main-image]').first();
+          if ($mainImage.length) {
+            if (post.mainImageUrl) {
+              var safeUrl = rtsJs.escapeHtml(post.mainImageUrl);
+              $mainImage.html('<img src="' + safeUrl + '" alt="' + rtsJs.escapeHtml(title) + '">');
+            } else {
+              $mainImage.empty();
+            }
+          }
+
+          var bodyHtml = rtsJs.portableTextToHtml(post.body);
+          if (!bodyHtml) {
+            rtsJs.renderSanityMessage($body, 'No content available.', 'empty');
+            return;
+          }
+          $body.html(bodyHtml);
+        })
+        .catch(function (err) {
+          rtsJs.renderSanityMessage($body, (err && err.message) ? err.message : 'Failed to load post.', 'error');
+        });
+    },
+
+    safeLinkHref: function (href) {
+      var h = (href || '').trim();
+      if (!h) {
+        return '';
+      }
+      var lower = h.toLowerCase();
+      if (lower.startsWith('javascript:')) {
+        return '';
+      }
+      return h;
+    },
+
+    portableTextToHtml: function (blocks) {
+      if (!Array.isArray(blocks) || blocks.length === 0) {
+        return '';
+      }
+
+      var html = '';
+      var openList = '';
+
+      function closeList() {
+        if (openList) {
+          html += '</' + openList + '>';
+          openList = '';
+        }
+      }
+
+      blocks.forEach(function (block) {
+        if (!block || typeof block !== 'object') {
+          return;
+        }
+
+        if (block._type === 'image' && block.url) {
+          closeList();
+          html += '<img src="' + rtsJs.escapeHtml(block.url) + '" alt="' + rtsJs.escapeHtml(block.alt || '') + '">';
+          return;
+        }
+
+        if (block._type !== 'block') {
+          return;
+        }
+
+        var children = Array.isArray(block.children) ? block.children : [];
+        var markDefs = Array.isArray(block.markDefs) ? block.markDefs : [];
+        var textHtml = '';
+
+        children.forEach(function (child) {
+          if (!child || child._type !== 'span') {
+            return;
+          }
+          var piece = rtsJs.escapeHtml(child.text || '');
+          var marks = Array.isArray(child.marks) ? child.marks : [];
+          marks.forEach(function (markKey) {
+            if (markKey === 'strong') {
+              piece = '<strong>' + piece + '</strong>';
+              return;
+            }
+            if (markKey === 'em') {
+              piece = '<em>' + piece + '</em>';
+              return;
+            }
+            if (markKey === 'code') {
+              piece = '<code>' + piece + '</code>';
+              return;
+            }
+            var def = markDefs.find(function (d) { return d && d._key === markKey; });
+            if (def && def._type === 'link' && def.href) {
+              var safeHref = rtsJs.safeLinkHref(def.href);
+              if (safeHref) {
+                piece = '<a href="' + rtsJs.escapeHtml(safeHref) + '" target="_blank" rel="noopener noreferrer">' + piece + '</a>';
+              }
+            }
+          });
+          textHtml += piece;
+        });
+
+        if (block.listItem) {
+          var listTag = block.listItem === 'number' ? 'ol' : 'ul';
+          if (openList && openList !== listTag) {
+            closeList();
+          }
+          if (!openList) {
+            openList = listTag;
+            html += '<' + listTag + '>';
+          }
+          html += '<li>' + textHtml + '</li>';
+          return;
+        }
+
+        closeList();
+
+        var style = (block.style || 'normal').toLowerCase();
+        if (style === 'h1' || style === 'h2' || style === 'h3' || style === 'h4' || style === 'h5' || style === 'h6') {
+          html += '<' + style + '>' + textHtml + '</' + style + '>';
+          return;
+        }
+        if (style === 'blockquote') {
+          html += '<blockquote>' + textHtml + '</blockquote>';
+          return;
+        }
+        html += '<p>' + textHtml + '</p>';
+      });
+
+      if (openList) {
+        html += '</' + openList + '>';
+      }
+      return html;
     },
 
     // sticky header activation
