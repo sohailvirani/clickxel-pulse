@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@portabletext/editor": "^6.6.4",
+    "@portabletext/plugin-sdk-value": "^6.0.27"
+  }
+}
