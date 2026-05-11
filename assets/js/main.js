@@ -2380,6 +2380,10 @@
       let varticle_scroll = document.getElementsByClassName('carticle-slide-active');
       if (varticle_scroll.length) {
 
+        if (!window.matchMedia || !window.matchMedia("(min-width:641px)").matches) {
+          return;
+        }
+
         gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
         const scrollMain = ScrollSmoother.create(); // global scroll
