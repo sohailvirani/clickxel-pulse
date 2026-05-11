@@ -653,7 +653,7 @@ ol ul {
 }
 
 .rts-section-gap {
-  padding: 150px 0;
+  padding: 62px 0px;
 }
 @media only screen and (min-width: 768px) and (max-width: 991px) {
   .rts-section-gap {
@@ -22731,13 +22731,13 @@ main {
 .index-one .brand-area-style-one.brand-marquee .brand-marquee-track {
   display: flex;
   align-items: center;
-  gap: 60px;
+  gap: 7px;
   width: max-content;
   flex-shrink: 0;
   animation: rtsBrandMarquee 35s linear infinite;
 }
 .index-one .brand-area-style-one.brand-marquee img {
-  max-height: 52px;
+  max-height: 229px;
   width: auto;
   height: auto;
   object-fit: contain;
