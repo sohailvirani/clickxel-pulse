@@ -20065,6 +20065,16 @@ body.coming-soon {
 .inner-page.service-3 .single-service-card-box-1 .title {
   transition: 0.3s;
 }
+.inner-page.service-3 .single-service-card-box-1 .icon svg {
+  display: none;
+}
+.inner-page.service-3 .single-service-card-box-1 .icon .service-card-icon-img {
+  width: 72px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+}
 .inner-page.service-3 .single-service-card-box-1::after {
   position: absolute;
   content: "";
