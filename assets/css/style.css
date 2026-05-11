@@ -18247,6 +18247,14 @@ body.coming-soon {
   background: #EEEEEE;
 }
 
+.index-one .grid-lines-wrapper {
+  display: none !important;
+}
+
+.index-one .service-area-one-main-wrapper .single-item-service-one:nth-child(n+6) {
+  display: none;
+}
+
 .rts-about-area-1 {
   position: relative;
   z-index: 10;
@@ -20403,6 +20411,7 @@ body.coming-soon {
 .counter-up-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 @media only screen and (max-width: 1199px) {
   .counter-up-wrapper {
@@ -22704,6 +22713,45 @@ main {
 }
 .brand-area-style-one img:hover {
   transform: translateY(-5px) scale(1.03);
+}
+
+.index-one .brand-area-style-one.brand-marquee {
+  display: block;
+  overflow: hidden;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  padding: 10px 0;
+  min-height: 72px;
+}
+.index-one .brand-area-style-one.brand-marquee a.rts-skew-up-gsap {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+.index-one .brand-area-style-one.brand-marquee .brand-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  width: max-content;
+  flex-shrink: 0;
+  animation: rtsBrandMarquee 35s linear infinite;
+}
+.index-one .brand-area-style-one.brand-marquee img {
+  max-height: 52px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+.index-one .brand-area-style-one.brand-marquee:hover .brand-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes rtsBrandMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .js-tilt-glare {
@@ -29538,4 +29586,3 @@ body.servi-ce-details .rts-footer-two-area {
 .open-event.style-open .icon-close line {
   stroke: #ffffff !important;
 }
-
