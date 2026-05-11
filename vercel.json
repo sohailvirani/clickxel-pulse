@@ -18,6 +18,24 @@
       }
     },
     {
+      "src": "/service-3/?$",
+      "status": 308,
+      "headers": {
+        "Location": "/services"
+      }
+    },
+    {
+      "src": "/service-3\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/services"
+      }
+    },
+    {
+      "src": "/services/?$",
+      "dest": "/service-3.html"
+    },
+    {
       "src": "/blog/([^/]+)/?$",
       "dest": "/blog-details.html?slug=$1"
     },

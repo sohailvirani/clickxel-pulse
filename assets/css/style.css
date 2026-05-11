@@ -29522,3 +29522,9 @@ body.servi-ce-details .rts-footer-two-area {
   display: none;
 }
 /*# sourceMappingURL=../maps/style.css.map */
+
+/* Fix for mobile menu close button visibility */
+.open-event.style-open .icon-close line {
+  stroke: #ffffff !important;
+}
+

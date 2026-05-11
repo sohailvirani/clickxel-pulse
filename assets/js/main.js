@@ -173,6 +173,10 @@
           normalizedPath = normalizedPath.slice(0, -'.html'.length);
         }
 
+        if (normalizedPath.toLowerCase() === '/service-3') {
+          normalizedPath = '/services';
+        }
+
         if (normalizedPath !== pathname) {
           var newUrl = normalizedPath + (window.location.search || '') + (window.location.hash || '');
           window.history.replaceState({}, '', newUrl);
@@ -218,6 +222,10 @@
             url.pathname = url.pathname.slice(0, -'.html'.length);
           } else {
             return;
+          }
+
+          if ((url.pathname || '').toLowerCase() === '/service-3') {
+            url.pathname = '/services';
           }
 
           $(this).attr('href', url.pathname + url.search + url.hash);
@@ -398,7 +406,11 @@
             var categories = Array.isArray(post.categories) ? post.categories.filter(Boolean) : [];
             var categoryText = categories.length ? categories.join(' / ') : 'Blog';
             var imageUrl = post.mainImageUrl ? rtsJs.escapeHtml(post.mainImageUrl) : '';
-            var href = 'blog/' + encodeURIComponent(post.slug);
+            var hostname = (window.location.hostname || '').toLowerCase();
+            var isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+            var href = isLocal
+              ? ('blog-details.html?slug=' + encodeURIComponent(post.slug))
+              : ('blog/' + encodeURIComponent(post.slug));
 
             html += '' +
               '<div class="single-blog-list-one rts-skew-up-gsap">' +
