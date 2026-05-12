@@ -17648,9 +17648,11 @@ h2 div {
 }
 
 .blog-details-breadcrumb .main-wrapper {
-  height: 665px;
+  height: 520px;
   width: 100%;
   overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 .blog-details-breadcrumb .main-wrapper .thumbnail-banner-large-iamge {
   background-image: none;
@@ -17659,7 +17661,20 @@ h2 div {
   background-attachment: fixed;
   background-position: center;
   height: 100%;
-  transform: scaleX(1.4);
+  transform: none;
+}
+.blog-details-breadcrumb .main-wrapper .thumbnail-banner-large-iamge img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media only screen and (max-width: 767px) {
+  .blog-details-breadcrumb .main-wrapper {
+    height: 280px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
 }
 
 .hero-slider .mySwiper-7-varticle2 {
