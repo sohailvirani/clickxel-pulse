@@ -367,7 +367,7 @@
       if (config.token) {
         headers.Authorization = 'Bearer ' + config.token;
       }
-      return fetch(url, { method: 'GET', headers: headers })
+      return fetch(url, { method: 'GET', headers: headers, mode: 'cors', credentials: 'omit' })
         .then(function (res) {
           if (!res.ok) {
             return res.text().then(function (text) {
@@ -435,7 +435,11 @@
           $target.html(html);
         })
         .catch(function (err) {
-          rtsJs.renderSanityMessage($target, (err && err.message) ? err.message : 'Failed to load posts.', 'error');
+          var msg = (err && err.message) ? err.message : 'Failed to load posts.';
+          if (/failed to fetch/i.test(msg)) {
+            msg = 'Failed to fetch posts. Add ' + (window.location && window.location.origin ? window.location.origin : 'your site domain') + ' to Sanity CORS Origins (Sanity Manage → API).';
+          }
+          rtsJs.renderSanityMessage($target, msg, 'error');
         });
     },
 
@@ -521,7 +525,11 @@
           $body.html(bodyHtml);
         })
         .catch(function (err) {
-          rtsJs.renderSanityMessage($body, (err && err.message) ? err.message : 'Failed to load post.', 'error');
+          var msg = (err && err.message) ? err.message : 'Failed to load post.';
+          if (/failed to fetch/i.test(msg)) {
+            msg = 'Failed to fetch post. Add ' + (window.location && window.location.origin ? window.location.origin : 'your site domain') + ' to Sanity CORS Origins (Sanity Manage → API).';
+          }
+          rtsJs.renderSanityMessage($body, msg, 'error');
         });
     },
 
@@ -559,7 +567,7 @@
 
         if (block._type === 'image' && block.url) {
           closeList();
-          html += '<img src="' + rtsJs.escapeHtml(block.url) + '" alt="' + rtsJs.escapeHtml(block.alt || '') + '">';
+          html += '<div class="mt--40 mb--40"><img src="' + rtsJs.escapeHtml(block.url) + '" alt="' + rtsJs.escapeHtml(block.alt || '') + '" style="max-width:100%; border-radius:10px;"></div>';
           return;
         }
 
@@ -618,14 +626,14 @@
 
         var style = (block.style || 'normal').toLowerCase();
         if (style === 'h1' || style === 'h2' || style === 'h3' || style === 'h4' || style === 'h5' || style === 'h6') {
-          html += '<' + style + '>' + textHtml + '</' + style + '>';
+          html += '<' + style + ' class="title mt--30 mb--20">' + textHtml + '</' + style + '>';
           return;
         }
         if (style === 'blockquote') {
-          html += '<blockquote>' + textHtml + '</blockquote>';
+          html += '<div class="quote-area mt--40 mb--40"><h6 class="quote-title">“' + textHtml + '”</h6></div>';
           return;
         }
-        html += '<p>' + textHtml + '</p>';
+        html += '<p class="disc">' + textHtml + '</p>';
       });
 
       if (openList) {
