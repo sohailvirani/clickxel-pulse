@@ -387,7 +387,7 @@
     loadSanityBlogList: function (config, $target) {
       $target.html('<div class="sanity-loading">Loading posts...</div>');
 
-      var query = '*[_type == "post" && defined(slug.current)] | order(coalesce(publishedAt, _createdAt) desc) [0...12]{title, "slug": slug.current, "excerpt": coalesce(excerpt, ""), publishedAt, "categories": categories[]->title, "mainImageUrl": mainImage.asset->url}';
+      var query = '*[_type == "post" && defined(slug.current)] | order(coalesce(publishedAt, _createdAt) desc) [0...12]{title, "slug": slug.current, "excerpt": coalesce(excerpt, ""), publishedAt, "categories": categories[]->title, "mainImageUrl": coalesce(image.asset->url, mainImage.asset->url)}';
 
       rtsJs.sanityQuery(config, query)
         .then(function (posts) {
@@ -476,7 +476,7 @@
 
       $body.html('<div class="sanity-loading">Loading post...</div>');
 
-      var query = '*[_type == "post" && slug.current == $slug][0]{title, "slug": slug.current, publishedAt, "categories": categories[]->title, "authorName": author->name, "authorImageUrl": author->image.asset->url, "mainImageUrl": mainImage.asset->url, body[]{..., _type == "image" => {"url": asset->url, "alt": coalesce(alt, "")}}}';
+      var query = '*[_type == "post" && slug.current == $slug][0]{title, "slug": slug.current, publishedAt, "categories": categories[]->title, authorName, "authorImageUrl": authorImage.asset->url, "mainImageUrl": coalesce(image.asset->url, mainImage.asset->url), body[]{..., _type == "image" => {"url": asset->url, "alt": coalesce(alt, "")}}}';
 
       rtsJs.sanityQuery(config, query, { slug: slug })
         .then(function (post) {
@@ -499,18 +499,25 @@
           }
 
           var authorName = post.authorName || '';
-          $('[data-sanity-author-name]').first().text(authorName || '');
+          $('[data-sanity-author-name]').first().text(authorName || 'Clickxel Pulse');
 
           var $authorImg = $('[data-sanity-author-image]').first();
-          if ($authorImg.length && post.authorImageUrl) {
-            $authorImg.attr('src', post.authorImageUrl);
-            $authorImg.attr('alt', authorName ? (authorName + ' photo') : 'Author');
+          if ($authorImg.length) {
+            if (post.authorImageUrl) {
+              $authorImg.attr('src', post.authorImageUrl);
+              $authorImg.attr('alt', authorName ? (authorName + ' photo') : 'Author');
+            } else {
+              $authorImg.attr('src', '/assets/images/logo/03.svg');
+              $authorImg.attr('alt', 'Author');
+            }
           }
 
-          var $mainImage = $('[data-sanity-main-image]').first();
+          var bannerUrl = post.mainImageUrl || '';
+
+          var $mainImage = $('[data-sanity-main-image]');
           if ($mainImage.length) {
-            if (post.mainImageUrl) {
-              var safeUrl = rtsJs.escapeHtml(post.mainImageUrl);
+            if (bannerUrl) {
+              var safeUrl = rtsJs.escapeHtml(bannerUrl);
               $mainImage.html('<img src="' + safeUrl + '" alt="' + rtsJs.escapeHtml(title) + '">');
             } else {
               $mainImage.empty();

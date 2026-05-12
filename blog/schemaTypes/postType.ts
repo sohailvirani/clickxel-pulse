@@ -28,9 +28,33 @@ export const postType = defineType({
       type: 'image',
     }),
     defineField({
+      name: 'excerpt',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'authorName',
+      type: 'string',
+    }),
+    defineField({
+      name: 'authorImage',
+      type: 'image',
+    }),
+    defineField({
       name: 'body',
       type: 'array',
-      of: [{type: 'block'}],
+      of: [
+        {type: 'block'},
+        {
+          type: 'image',
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+            },
+          ],
+        },
+      ],
     }),
   ],
 })
