@@ -17648,7 +17648,7 @@ h2 div {
 }
 
 .blog-details-breadcrumb .main-wrapper {
-  height: 520px;
+  height: auto;
   width: 100%;
   overflow: hidden;
   margin-top: 20px;
@@ -17665,13 +17665,12 @@ h2 div {
 }
 .blog-details-breadcrumb .main-wrapper .thumbnail-banner-large-iamge img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   display: block;
 }
 @media only screen and (max-width: 767px) {
   .blog-details-breadcrumb .main-wrapper {
-    height: 280px;
     margin-top: 12px;
     margin-bottom: 12px;
   }
@@ -25642,14 +25641,9 @@ section.svg-container:nth-last-of-type(0) svg.radial-progress {
 }
 .sanity-blog-grid .single-blog-list-one .thumbnail img {
   width: 100%;
-  height: 260px;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   display: block;
-}
-@media (max-width: 767px) {
-  .sanity-blog-grid .single-blog-list-one .thumbnail img {
-    height: 200px;
-  }
 }
 .sanity-blog-grid .single-blog-list-one .blog-content-area {
   margin-top: 16px;

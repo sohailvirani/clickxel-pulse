@@ -423,7 +423,7 @@
             var excerpt = rtsJs.escapeHtml(post.excerpt || '');
             var categories = Array.isArray(post.categories) ? post.categories.filter(Boolean) : [];
             var categoryText = categories.length ? categories.join(' / ') : 'Blog';
-            var thumbnailUrl = post.mainImageUrl ? rtsJs.appendQueryParams(String(post.mainImageUrl), { auto: 'format', w: 900, h: 520, fit: 'crop' }) : '';
+            var thumbnailUrl = post.mainImageUrl ? rtsJs.appendQueryParams(String(post.mainImageUrl), { auto: 'format', w: 1200, fit: 'max' }) : '';
             var imageUrl = thumbnailUrl ? rtsJs.escapeHtml(thumbnailUrl) : '';
             var hostname = (window.location.hostname || '').toLowerCase();
             var isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
@@ -531,7 +531,7 @@
             }
           }
 
-          var bannerUrl = post.mainImageUrl ? rtsJs.appendQueryParams(String(post.mainImageUrl), { auto: 'format', w: 1600, fit: 'max' }) : '';
+          var bannerUrl = post.mainImageUrl ? rtsJs.appendQueryParams(String(post.mainImageUrl), { auto: 'format', w: 2000, fit: 'max' }) : '';
 
           var $mainImage = $('[data-sanity-main-image]');
           if ($mainImage.length) {
