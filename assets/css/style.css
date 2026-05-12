@@ -25618,6 +25618,47 @@ section.svg-container:nth-last-of-type(0) svg.radial-progress {
   letter-spacing: 2.6px;
   text-transform: uppercase;
 }
+
+.sanity-blog-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 992px) {
+  .sanity-blog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.sanity-blog-grid .single-blog-list-one {
+  display: block;
+  border-bottom: none;
+  padding: 0;
+  gap: 0;
+}
+.sanity-blog-grid .single-blog-list-one .thumbnail {
+  display: block;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.sanity-blog-grid .single-blog-list-one .thumbnail img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+@media (max-width: 767px) {
+  .sanity-blog-grid .single-blog-list-one .thumbnail img {
+    height: 200px;
+  }
+}
+.sanity-blog-grid .single-blog-list-one .blog-content-area {
+  margin-top: 16px;
+}
+.sanity-blog-grid .single-blog-list-one .blog-content-area .title {
+  font-size: 26px;
+  line-height: 36px;
+  margin-bottom: 12px;
+}
 .single-blog-list-one .blog-content-area .title {
   color: #FFF;
   font-size: 36px;
