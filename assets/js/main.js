@@ -334,6 +334,24 @@
         .replace(/'/g, '&#39;');
     },
 
+    appendQueryParams: function (url, params) {
+      var raw = (url || '').trim();
+      if (!raw || !params || typeof params !== 'object') {
+        return raw;
+      }
+      var out = raw;
+      var hasQuery = out.indexOf('?') !== -1;
+      Object.keys(params).forEach(function (key) {
+        var val = params[key];
+        if (val == null || val === '') {
+          return;
+        }
+        out += (hasQuery ? '&' : '?') + encodeURIComponent(key) + '=' + encodeURIComponent(String(val));
+        hasQuery = true;
+      });
+      return out;
+    },
+
     formatDate: function (isoDate) {
       if (!isoDate) {
         return '';
@@ -405,7 +423,8 @@
             var excerpt = rtsJs.escapeHtml(post.excerpt || '');
             var categories = Array.isArray(post.categories) ? post.categories.filter(Boolean) : [];
             var categoryText = categories.length ? categories.join(' / ') : 'Blog';
-            var imageUrl = post.mainImageUrl ? rtsJs.escapeHtml(post.mainImageUrl) : '';
+            var thumbnailUrl = post.mainImageUrl ? rtsJs.appendQueryParams(String(post.mainImageUrl), { auto: 'format', w: 900, h: 520, fit: 'crop' }) : '';
+            var imageUrl = thumbnailUrl ? rtsJs.escapeHtml(thumbnailUrl) : '';
             var hostname = (window.location.hostname || '').toLowerCase();
             var isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
             var href = isLocal
@@ -504,7 +523,7 @@
           var $authorImg = $('[data-sanity-author-image]').first();
           if ($authorImg.length) {
             if (post.authorImageUrl) {
-              $authorImg.attr('src', post.authorImageUrl);
+              $authorImg.attr('src', rtsJs.appendQueryParams(String(post.authorImageUrl), { auto: 'format', w: 120, h: 120, fit: 'crop' }));
               $authorImg.attr('alt', authorName ? (authorName + ' photo') : 'Author');
             } else {
               $authorImg.attr('src', '/assets/images/logo/03.svg');
@@ -512,7 +531,7 @@
             }
           }
 
-          var bannerUrl = post.mainImageUrl || '';
+          var bannerUrl = post.mainImageUrl ? rtsJs.appendQueryParams(String(post.mainImageUrl), { auto: 'format', w: 1600, fit: 'max' }) : '';
 
           var $mainImage = $('[data-sanity-main-image]');
           if ($mainImage.length) {
