@@ -324,6 +324,137 @@
       $target.html('<div class="' + cls + '">' + safeMessage + '</div>');
     },
 
+    isLocalHost: function () {
+      var hostname = (window.location.hostname || '').toLowerCase();
+      return hostname === 'localhost' || hostname === '127.0.0.1';
+    },
+
+    getFallbackBlogPosts: function () {
+      return [
+        {
+          title: 'Performance Marketing: A Practical Growth System',
+          slug: 'performance-marketing-growth-system',
+          excerpt: 'A simple framework to research, launch, optimize, and scale campaigns with predictable performance.',
+          categories: ['Performance Marketing'],
+          mainImageUrl: '/assets/images/blog/01.jpg'
+        },
+        {
+          title: 'How to Improve ROAS Without Increasing Budget',
+          slug: 'improve-roas-without-more-budget',
+          excerpt: 'Creative testing + funnel fixes can often beat brute-force budget increases. Here’s how to approach it.',
+          categories: ['Paid Ads', 'Optimization'],
+          mainImageUrl: '/assets/images/blog/02.jpg'
+        },
+        {
+          title: 'Landing Page Fixes That Reduce CPA',
+          slug: 'landing-page-fixes-reduce-cpa',
+          excerpt: 'Small UX and copy updates can lift conversion rate and lower your cost per acquisition.',
+          categories: ['CRO', 'Funnels'],
+          mainImageUrl: '/assets/images/blog/03.jpg'
+        },
+        {
+          title: 'Retargeting That Actually Converts',
+          slug: 'retargeting-that-converts',
+          excerpt: 'Retargeting is more than “show ads again”. Build sequences that move users to action.',
+          categories: ['Retargeting'],
+          mainImageUrl: '/assets/images/blog/04.jpg'
+        },
+        {
+          title: 'A Simple Weekly Ads Optimization Checklist',
+          slug: 'weekly-ads-optimization-checklist',
+          excerpt: 'Use this weekly routine to maintain performance and spot problems early.',
+          categories: ['Process'],
+          mainImageUrl: '/assets/images/blog/05.png'
+        },
+        {
+          title: 'Tracking Setup: What You Need (And What You Don’t)',
+          slug: 'tracking-setup-essentials',
+          excerpt: 'Get clean reporting without overcomplicating your measurement stack.',
+          categories: ['Analytics'],
+          mainImageUrl: '/assets/images/blog/06.jpg'
+        }
+      ];
+    },
+
+    renderSanityFallbackBlogList: function ($target, message) {
+      if (!$target || !$target.length) {
+        return;
+      }
+
+      var posts = rtsJs.getFallbackBlogPosts();
+      var isLocal = rtsJs.isLocalHost();
+
+      var html = '';
+      posts.forEach(function (post) {
+        var title = rtsJs.escapeHtml(post.title || 'Untitled');
+        var excerpt = rtsJs.escapeHtml(post.excerpt || '');
+        var categories = Array.isArray(post.categories) ? post.categories.filter(Boolean) : [];
+        var categoryText = categories.length ? categories.join(' / ') : 'Blog';
+        var imageUrl = post.mainImageUrl ? rtsJs.escapeHtml(String(post.mainImageUrl)) : '';
+        var href = isLocal
+          ? ('blog-details.html?slug=' + encodeURIComponent(post.slug || ''))
+          : ('blog/' + encodeURIComponent(post.slug || ''));
+
+        html += '' +
+          '<div class="single-blog-list-one rts-skew-up-gsap">' +
+          '  <a href="' + href + '" class="thumbnail">' +
+          (imageUrl ? ('    <img src="' + imageUrl + '" alt="' + title + '">') : '') +
+          '  </a>' +
+          '  <div class="blog-content-area">' +
+          '    <span>' + rtsJs.escapeHtml(categoryText) + '</span>' +
+          '    <a href="' + href + '">' +
+          '      <h3 class="title quote">' + title + '</h3>' +
+          '    </a>' +
+          (excerpt ? ('    <p class="disc">' + excerpt + '</p>') : '') +
+          '    <a href="' + href + '" class="read-more-bb">Read More</a>' +
+          '  </div>' +
+          '</div>';
+      });
+
+      $target.html(html);
+    },
+
+    renderSanityFallbackBlogDetails: function (slug, message) {
+      var $body = $('[data-sanity-blog-body]').first();
+      if (!$body.length) {
+        return;
+      }
+
+      var posts = rtsJs.getFallbackBlogPosts();
+      var match = posts.find(function (p) { return p && p.slug === slug; }) || posts[0] || {};
+
+      var title = match.title || 'Blog Post';
+      var categories = Array.isArray(match.categories) ? match.categories.filter(Boolean) : [];
+      var metaText = categories.length ? categories.join(' / ') : 'Blog';
+
+      $('[data-sanity-post-title]').first().text(title);
+      var $meta = $('[data-sanity-post-meta]').first();
+      if ($meta.length) {
+        $meta.html(rtsJs.escapeHtml(metaText) + ' <span>/ Local Preview</span>');
+      }
+      $('[data-sanity-author-name]').first().text('Clickxel Pulse');
+
+      var $mainImage = $('[data-sanity-main-image]');
+      if ($mainImage.length) {
+        if (match.mainImageUrl) {
+          $mainImage.html('<img src="' + rtsJs.escapeHtml(String(match.mainImageUrl)) + '" alt="' + rtsJs.escapeHtml(title) + '">');
+        } else {
+          $mainImage.empty();
+        }
+      }
+
+      var content = '' +
+        '<p class="mt--30">This is a local fallback preview so you can work on layout while Sanity API access is blocked by CORS.</p>' +
+        '<p class="mt--20">' + rtsJs.escapeHtml(match.excerpt || '') + '</p>' +
+        '<h3 class="mt--40">What to do next</h3>' +
+        '<ul class="mt--20">' +
+        '  <li>Add your site origin to Sanity CORS Origins (Sanity Manage → API).</li>' +
+        '  <li>Refresh this page after saving settings.</li>' +
+        '</ul>';
+
+      $body.html(content);
+    },
+
     escapeHtml: function (value) {
       var str = value == null ? '' : String(value);
       return str
@@ -457,6 +588,10 @@
           var msg = (err && err.message) ? err.message : 'Failed to load posts.';
           if (/failed to fetch/i.test(msg)) {
             msg = 'Failed to fetch posts. Add ' + (window.location && window.location.origin ? window.location.origin : 'your site domain') + ' to Sanity CORS Origins (Sanity Manage → API).';
+            if (rtsJs.isLocalHost()) {
+              rtsJs.renderSanityFallbackBlogList($target, msg);
+              return;
+            }
           }
           rtsJs.renderSanityMessage($target, msg, 'error');
         });
@@ -554,6 +689,10 @@
           var msg = (err && err.message) ? err.message : 'Failed to load post.';
           if (/failed to fetch/i.test(msg)) {
             msg = 'Failed to fetch post. Add ' + (window.location && window.location.origin ? window.location.origin : 'your site domain') + ' to Sanity CORS Origins (Sanity Manage → API).';
+            if (rtsJs.isLocalHost()) {
+              rtsJs.renderSanityFallbackBlogDetails(rtsJs.getSanitySlugFromLocation(), msg);
+              return;
+            }
           }
           rtsJs.renderSanityMessage($body, msg, 'error');
         });

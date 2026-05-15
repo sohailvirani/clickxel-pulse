@@ -17,6 +17,35 @@
     <link rel="stylesheet" href="/assets/css/plugins/animate.min.css">
     <link rel="stylesheet" href="/assets/css/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        .sanity-blog-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .sanity-blog-grid .sanity-loading,
+        .sanity-blog-grid .sanity-error,
+        .sanity-blog-grid .sanity-empty {
+            grid-column: 1 / -1;
+        }
+
+        .sanity-blog-grid .single-blog-list-one {
+            margin-bottom: 0;
+        }
+
+        @media (min-width: 768px) {
+            .sanity-blog-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sanity-blog-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
 </head>
 
 <body class="inner-page">
